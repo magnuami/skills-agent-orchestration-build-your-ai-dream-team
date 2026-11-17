@@ -1,0 +1,36 @@
+{
+  "projects": [
+    {
+      "name": "Community Portal",
+      "owner": "Mona",
+      "status": "In progress",
+      "recentActivity": "Contributor sign-up flow is ready for review.",
+      "priority": "High",
+      "summary": "Help new contributors find their first issue and get started."
+    },
+    {
+      "name": "Design System",
+      "owner": "Alex",
+      "status": "Active",
+      "recentActivity": "Button and form patterns were updated this week.",
+      "priority": "Medium",
+      "summary": "Document reusable UI patterns and flag gaps for the next release."
+    },
+    {
+      "name": "Docs Refresh",
+      "owner": "Priya",
+      "status": "Needs review",
+      "recentActivity": "Getting-started guide is waiting for a technical review.",
+      "priority": "Low",
+      "summary": "Review setup instructions and suggest clearer contributor examples."
+    },
+    {
+      "name": "Release Readiness",
+      "owner": "Jordan",
+      "status": "Planning",
+      "recentActivity": "The release checklist is being gathered from maintainers.",
+      "priority": "High",
+      "summary": "Check open release tasks and help surface blockers early."
+    }
+  ]
+}

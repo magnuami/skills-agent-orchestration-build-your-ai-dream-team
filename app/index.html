@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="A quick, contributor-friendly overview of Mona's team projects.">
+    <title>Project Pulse</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="dashboard" aria-labelledby="dashboard-title">
+      <header class="dashboard-header">
+        <p class="eyebrow">Mona's team · Project overview</p>
+        <h1 id="dashboard-title">Project Pulse</h1>
+        <p>A quick read on what's moving, who to ask, and where contributors can help.</p>
+      </header>
+
+      <p class="dashboard-status" role="status" aria-live="polite">Loading project data…</p>
+      <section class="project-grid" aria-label="Projects" aria-busy="true"></section>
+    </main>
+
+    <script>
+      const projectGrid = document.querySelector(".project-grid");
+      const dashboardStatus = document.querySelector(".dashboard-status");
+
+      function addText(container, tagName, className, text) {
+        const element = document.createElement(tagName);
+        element.className = className;
+        element.textContent = text;
+        container.append(element);
+        return element;
+      }
+
+      function createProjectCard(project, index) {
+        const card = document.createElement("article");
+        card.className = "project-card";
+        card.setAttribute("aria-labelledby", `project-title-${index}`);
+
+        const header = document.createElement("header");
+        header.className = "project-card__header";
+        const title = addText(header, "h2", "project-card__title", project.name);
+        title.id = `project-title-${index}`;
+        addText(header, "p", "project-card__owner", `Owned by ${project.owner}`);
+        card.append(header);
+
+        addText(card, "p", "project-card__summary", project.summary);
+
+        const details = document.createElement("dl");
+        details.className = "project-card__meta";
+
+        const statusItem = document.createElement("div");
+        statusItem.className = "project-card__meta-item";
+        addText(statusItem, "dt", "", "Status");
+        const statusValue = document.createElement("dd");
+        const statusBadge = addText(statusValue, "span", "status-badge", project.status);
+        statusBadge.setAttribute("data-status", project.status.toLowerCase().replace(/ /g, "-"));
+        statusBadge.setAttribute("aria-label", `Status: ${project.status}`);
+        statusItem.append(statusValue);
+        details.append(statusItem);
+
+        const activityItem = document.createElement("div");
+        activityItem.className = "project-card__meta-item";
+        addText(activityItem, "dt", "", "Recent activity");
+        addText(activityItem, "dd", "", project.recentActivity);
+        details.append(activityItem);
+
+        const priorityItem = document.createElement("div");
+        priorityItem.className = "project-card__meta-item";
+        addText(priorityItem, "dt", "", "Priority");
+        const priorityValue = document.createElement("dd");
+        const priorityBadge = addText(priorityValue, "span", "priority-badge", project.priority);
+        priorityBadge.setAttribute("data-priority", project.priority.toLowerCase().replace(/ /g, "-"));
+        priorityBadge.setAttribute("aria-label", `Priority: ${project.priority}`);
+        priorityItem.append(priorityValue);
+        details.append(priorityItem);
+
+        card.append(details);
+        return card;
+      }
+
+      async function loadProjects() {
+        try {
+          const response = await fetch("project-data.json");
+          if (!response.ok) {
+            throw new Error(`Project data request failed (${response.status}).`);
+          }
+
+          const data = await response.json();
+          if (!Array.isArray(data.projects)) {
+            throw new Error("Project data must include a projects array.");
+          }
+
+          const cards = data.projects.map(createProjectCard);
+          projectGrid.replaceChildren(...cards);
+          projectGrid.setAttribute("aria-busy", "false");
+          dashboardStatus.textContent = cards.length
+            ? `${cards.length} ${cards.length === 1 ? "project" : "projects"} loaded.`
+            : "No projects are available yet.";
+        } catch (error) {
+          projectGrid.setAttribute("aria-busy", "false");
+          dashboardStatus.setAttribute("role", "alert");
+          dashboardStatus.textContent = `Unable to load project data. ${error.message}`;
+        }
+      }
+
+      loadProjects();
+    </script>
+  </body>
+</html>
